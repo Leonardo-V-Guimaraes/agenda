@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import model.DAO;
 import model.JavaBeans;
 
-@WebServlet(urlPatterns = { "/Controller", "/main", "/insert", "/select","/update" })
+@WebServlet(urlPatterns = { "/Controller", "/main", "/insert", "/select", "/update", "/delete" })
 public class Controller extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	DAO dao = new DAO();
@@ -35,6 +35,8 @@ public class Controller extends HttpServlet {
 			listarContato(request, response);
 		} else if (action.equals("/update")) {
 			editarContato(request, response);
+		} else if (action.equals("/delete")) {
+			removerContato(request, response);
 		} else {
 			response.sendRedirect("index.html");
 		}
@@ -78,7 +80,7 @@ public class Controller extends HttpServlet {
 		response.sendRedirect("main");
 
 	}
-	
+
 	// Editar contato
 	protected void listarContato(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -88,12 +90,11 @@ public class Controller extends HttpServlet {
 		contato.setIdcon(idcon);
 		// Executar o método selecionarContato (DAO)
 		dao.selecionarContato(contato);
-		/* teste de recebimento
-		System.out.println(contato.getIdcon());
-		System.out.println(contato.getNome());
-		System.out.println(contato.getFone());
-		System.out.println(contato.getEmail());
-		*/
+		/*
+		 * teste de recebimento System.out.println(contato.getIdcon());
+		 * System.out.println(contato.getNome()); System.out.println(contato.getFone());
+		 * System.out.println(contato.getEmail());
+		 */
 		// Setar os atributos do formulário com o conteúdo JavaBeans
 		request.setAttribute("idcon", contato.getIdcon());
 		request.setAttribute("nome", contato.getNome());
@@ -101,16 +102,16 @@ public class Controller extends HttpServlet {
 		request.setAttribute("email", contato.getEmail());
 		// Encaminhar ao documento editar.jsp
 		RequestDispatcher rd = request.getRequestDispatcher("editar.jsp");
-		rd.forward(request,  response);		
+		rd.forward(request, response);
 	}
-	
+
 	protected void editarContato(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException { 
-		/* teste de recebimento
-		 System.out.println(request.getParameter("idcon"));
-		 System.out.println(request.getParameter("nome"));
-		 System.out.println(request.getParameter("fone"));
-		 System.out.println(request.getParameter("email"));
+			throws ServletException, IOException {
+		/*
+		 * teste de recebimento System.out.println(request.getParameter("idcon"));
+		 * System.out.println(request.getParameter("nome"));
+		 * System.out.println(request.getParameter("fone"));
+		 * System.out.println(request.getParameter("email"));
 		 */
 		// setar as variáveis JavaBeans
 		contato.setIdcon(request.getParameter("idcon"));
@@ -121,6 +122,23 @@ public class Controller extends HttpServlet {
 		dao.alterarContato(contato);
 		// redirecionar para o documento agenda.jsp (atualizando as alterações)
 		response.sendRedirect("main");
+	}
+
+	// Remover um contato
+	protected void removerContato(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		// recebimento do is do contato a ser excluido (validadro.js)
+		String idcon = request.getParameter("idcon");
+		// setar a variável idcon Javabeans
+		contato.setIdcon(idcon);
+		// executar o método deletarContato (DAO) passando o objeto contato
+		dao.deletarContato(contato);
+		// redirecionar para o documento agenda.jsp (atualizando as alterações)
+		response.sendRedirect("main");
+
+		// Teste
+		// System.out.println(idcon);
+
 	}
 
 }
